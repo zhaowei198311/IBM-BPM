@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartsystem.dao.SysRoleUserMapper" >
+    <sql id="Base_Column_List" >
+        MAP_UID, MAP_TYPE, USER_UID, DEPART_UID, ROLE_UID, IS_MANAGER, IS_SHOW
+    </sql>
+    
+    <sql id="relationColumn">
+        ru.MAP_UID, ru.MAP_TYPE, ru.USER_UID, ru.DEPART_UID, ru.ROLE_UID, ru.IS_MANAGER, ru.IS_SHOW
+    </sql>
+  
+    <sql id="RoleUser_Column_List" >
+    	r.MAP_UID, r.MAP_TYPE, r.USER_UID, r.DEPART_UID, r.ROLE_UID, r.IS_MANAGER, r.IS_SHOW,u.USER_NAME,u.USER_UID
+    </sql>
+
+    <sql id="selectAll_Column" >
+    	r.MAP_UID, r.MAP_TYPE, r.USER_UID, r.DEPART_UID, r.ROLE_UID, r.IS_MANAGER, r.IS_SHOW,u.USER_NAME,u.USER_UID,role.ROLE_NAME
+    </sql>
+  
   <resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysRoleUser" >
     <id column="MAP_UID" property="mapUid" jdbcType="VARCHAR" />
     <result column="MAP_TYPE" property="mapType" jdbcType="DECIMAL" />
@@ -43,21 +59,7 @@
      </collection> 
   </resultMap>
   
-  
-  <sql id="Base_Column_List" >
-    MAP_UID, MAP_TYPE, USER_UID, DEPART_UID, ROLE_UID, IS_MANAGER, IS_SHOW
-  </sql>
-  
-  <sql id="RoleUser_Column_List" >
-    	r.MAP_UID, r.MAP_TYPE, r.USER_UID, r.DEPART_UID, r.ROLE_UID, r.IS_MANAGER, r.IS_SHOW,u.USER_NAME,u.USER_UID
-  </sql>
-  
-   <sql id="selectAll_Column" >
-    	r.MAP_UID, r.MAP_TYPE, r.USER_UID, r.DEPART_UID, r.ROLE_UID, r.IS_MANAGER, r.IS_SHOW,u.USER_NAME,u.USER_UID,role.ROLE_NAME
-  </sql>
-  
-  
-  
+ 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     	select <include refid="RoleUser_Column_List" /> from SYS_ROLE_USER r 
     	left join Sys_USER u on u.USER_UID=r.USER_UID 
@@ -119,8 +121,19 @@
   		</where>
   		 GROUP BY r.ROLE_UID
   </select>
-  
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+
+    <select id="listByRoleUidsWithStation" resultType="com.desmart.desmartsystem.entity.SysRoleUser">
+        select <include refid="relationColumn"/>, r.station
+          from sys_role_user ru
+          left join sys_role r
+            on ru.role_uid = r.role_uid
+        where
+        <foreach collection="collection" item="item" separator="or">
+            ru.role_uid = #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from SYS_ROLE_USER
     where USER_UID = #{userUid,jdbcType=VARCHAR}
   </delete>

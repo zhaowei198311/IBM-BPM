@@ -1,13 +1,29 @@
 package com.desmart.desmartsystem.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.ibatis.annotations.Param;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartsystem.dao.SysDepartmentMapper;
+import com.desmart.desmartsystem.dao.SysRoleUserMapper;
+import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
+import com.desmart.desmartsystem.dao.SysUserDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.SysDepartment;
+import com.desmart.desmartsystem.entity.SysRoleUser;
+import com.desmart.desmartsystem.entity.SysTeamMember;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
 import com.desmart.desmartsystem.service.SysUserDepartmentService;
@@ -17,33 +33,35 @@ import com.desmart.desmartsystem.util.PagedResult;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
-/**
- * <p>
- *  服务实现类
- * </p>
- *
- * @author xsf
- * @since 2018-04-08
- */
+
 @Service
 public class SysUserServiceImpl implements SysUserService {
-
-	@Autowired
-	SysUserMapper sysUserDao;
+	private static final Logger logger = LoggerFactory.getLogger(SysUserServiceImpl.class);
 	
 	@Autowired
+	SysUserMapper sysUserMapper;
+	@Autowired
 	SysUserDepartmentService sysUserDepartmentService;
+	@Autowired
+	private SysRoleUserMapper sysRoleUserMapper;
+	@Autowired
+	private SysTeamMemberMapper sysTeamMemberMapper;
+	@Autowired
+	private SysUserDepartmentMapper sysUserDepartmentMapper;
+	@Autowired
+	private SysDepartmentMapper sysDepartmentMapper;
+
 	
 	@Override
 	public int insert(SysUser entity) throws Exception {
 		// TODO Auto-generated method stub
-		return sysUserDao.insert(entity);
+		return sysUserMapper.insert(entity);
 	}
 
 	@Override
 	public int update(SysUser entity) throws Exception {
 		// TODO Auto-generated method stub
-		return sysUserDao.update(entity); 
+		return sysUserMapper.update(entity);
 	} 
 
 	@Override
@@ -53,19 +71,19 @@ public class SysUserServiceImpl implements SysUserService {
 		userDepartment.setUserUid(entity.getUserUid());
 		sysUserDepartmentService.delete(userDepartment);
 		
-		return sysUserDao.delete(entity);
+		return sysUserMapper.delete(entity);
 	}
 
 	@Override 
 	public SysUser select(SysUser entity) {
 		// TODO Auto-generated method stub
-		return sysUserDao.select(entity);
+		return sysUserMapper.select(entity);
 	}
 
 	@Override
 	public SysUser findById(SysUser id) {
 		// TODO Auto-generated method stub
-		return sysUserDao.findById(id);
+		return sysUserMapper.findById(id);
 	}
 
 	@Override
@@ -74,18 +92,18 @@ public class SysUserServiceImpl implements SysUserService {
 		pageNo = pageNo == null?1:pageNo;
 		pageSize = pageSize == null?10:pageSize;
 		PageHelper.startPage(pageNo,pageSize);  //startPage是告诉拦截器说我要开始分页了。分页参数是这两个。
-		return BeanUtil.toPagedResult(sysUserDao.selectAll(entity));
+		return BeanUtil.toPagedResult(sysUserMapper.selectAll(entity));
 	}
 
 	@Override
 	public List<SysUser> selectAll(SysUser entity) {
 		// TODO Auto-generated method stub
-		return sysUserDao.selectAll(entity);
+		return sysUserMapper.selectAll(entity);
 	}
 
 	@Override
 	public List<SysUser> login(String username, String password) {
-		List<SysUser> userList = sysUserDao.login(username, password);
+		List<SysUser> userList = sysUserMapper.login(username, password);
 		return userList;
 	}
 
@@ -96,8 +114,229 @@ public class SysUserServiceImpl implements SysUserService {
 		if(userUidArr.length==1 && (null==userUidArr[0]||userUidArr[0].equals(""))) {
 			userUidArr = null;
 		}
-		List<SysUser> userList = sysUserDao.allSysUserMove(userUidArr,condition);
+		List<SysUser> userList = sysUserMapper.allSysUserMove(userUidArr,condition);
 		PageInfo<List<SysUser>> info = new PageInfo(userList);
 		return ServerResponse.createBySuccess(info);
+	}
+
+	@Override
+	public List<SysUser> searchByUserUids(Collection<String> userUids) {
+		if (CollectionUtils.isEmpty(userUids)) {
+			return new ArrayList<>();
+		}
+		Set<String> userUidSet = new HashSet<>();
+		userUidSet.addAll(userUids);
+		return sysUserMapper.listByPrimaryKeyList(userUidSet);
+	}
+
+
+	@Override
+	public List<SysUser> searchByRoleUidList(List<String> roleUidList) {
+		if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		SysRoleUser roleUser = new SysRoleUser();
+		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
+		//根据角色id集合查询角色用户映射关系数据
+		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
+		String tempIdStr = "";
+		for (SysRoleUser sysRoleUser : roleUsers) {
+			tempIdStr += sysRoleUser.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
+	}
+
+	@Override
+	public List<SysUser> searchByRoleUidListAndDepartment(List<String> roleUidList, String departNo) {
+		if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		SysRoleUser roleUser = new SysRoleUser();
+		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
+		SysDepartment selective = new SysDepartment();
+		selective.setDepartUid(departNo);
+		//查询当前departNo的父级树节点，包括自己
+		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
+		if(CollectionUtils.isEmpty(sysDepartmentList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		roleUser.setSysDepartmentList(sysDepartmentList);
+		//根据角色id集合加部门uid查询角色用户映射关系数据
+		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
+		String tempIdStr = "";
+		for (SysRoleUser sysRoleUser : roleUsers) {
+			tempIdStr += sysRoleUser.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
+	}
+
+	@Override
+	public List<SysUser> searchByRoleUidListAndCompany(List<String> roleUidList, String companyNum) {
+		if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		SysRoleUser roleUser = new SysRoleUser();
+		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
+		//设置公司编码查询条件
+		roleUser.setCompanyCode(companyNum);
+		//根据角色id集合加公司编码查询角色用户映射关系数据
+		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
+		String tempIdStr = "";
+		for (SysRoleUser sysRoleUser : roleUsers) {
+			tempIdStr += sysRoleUser.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
+	}
+
+	@Override
+	public List<SysUser> searchByTeam(List<String> teamUidList) {
+		if(CollectionUtils.isEmpty(teamUidList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		SysTeamMember sysTeamMember = new SysTeamMember();
+		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
+		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
+		String tempIdStr = "";
+		for (SysTeamMember member : sysTeamMembers) {
+			tempIdStr += member.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
+	}
+
+	@Override
+	public List<SysUser> searchbyTeamAndDepartment(List<String> teamUidList, String departNo) {
+		if(CollectionUtils.isEmpty(teamUidList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		SysTeamMember sysTeamMember = new SysTeamMember();
+		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
+		SysDepartment selective = new SysDepartment();
+		selective.setDepartUid(departNo);
+		//查询当前departNo的父级树节点，包括自己
+		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
+		if(CollectionUtils.isEmpty(sysDepartmentList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		sysTeamMember.setSysDepartmentList(sysDepartmentList);
+		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
+		String tempIdStr = "";
+		for (SysTeamMember member : sysTeamMembers) {
+			tempIdStr += member.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
+	}
+
+	@Override
+	public List<SysUser> searchByTeamAndCompany(List<String> objIdList, String companyNum) {
+		if(CollectionUtils.isEmpty(objIdList)) {//查询条件集合为空，则直接返回空集合
+			return new ArrayList<>();
+		}
+		SysTeamMember sysTeamMember = new SysTeamMember();
+		sysTeamMember.setTeamUidList(objIdList);//设置角色组uid集合查询条件
+		sysTeamMember.setCompanyCode(companyNum);
+		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
+		String tempIdStr = "";
+		for (SysTeamMember member : sysTeamMembers) {
+			tempIdStr += member.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
+	}
+
+
+	@Override
+	public List<SysUser> searchByLeaderOfPreActivityUser(SysUser sysUser) {
+		String departNo = sysUser.getDepartUid();
+		SysUserDepartment selective = new SysUserDepartment();
+		selective.setDepartUid(departNo);
+		selective.setIsManager(SysUserDepartment.IS_MANAGER_TRUE);
+		List<SysUserDepartment> departmentByManagerList = sysUserDepartmentMapper.selectAll(selective);//根据用户部门查询部门管理者集合
+		List<String> userUidList = new ArrayList<>();//用来保存部门管理者的主键
+		for (Iterator<SysUserDepartment> iterator = departmentByManagerList.iterator(); iterator.hasNext();) {
+			SysUserDepartment sysUserDepartment = iterator.next();
+			if(StringUtils.isBlank(sysUserDepartment.getUserUid())) {
+				iterator.remove();//如果当前数据的用户的userUid不存在，则从列表中移除
+			}else if(sysUser.getUserUid().equals(sysUserDepartment.getUserUid())){
+				iterator.remove();//判断管理者Uid是不是当前用户，如果是则移除。
+			}else {
+				userUidList.add(sysUserDepartment.getUserUid());
+			}
+		}
+		if (CollectionUtils.isEmpty(userUidList)) {
+			//根据部门id查询其父部门id
+			SysDepartment parentDepartment = sysDepartmentMapper.queryParentDepartByDepartId(departNo);
+			sysUser.setDepartUid(parentDepartment.getDepartUid());
+			return searchByLeaderOfPreActivityUser(sysUser);//继续递归查询上级部门的用户
+		}
+		List<SysUser> managerList = sysUserMapper.listByPrimaryKeyList(userUidList);//获取到根据userUid查询到的人员集合
+		if(managerList != null && managerList.size() > 0) {//上级用户存在人，则直接返回
+			return managerList;
+		}else {
+			//根据部门id查询其父部门id
+			SysDepartment parentDepartment = sysDepartmentMapper.queryParentDepartByDepartId(departNo);
+			sysUser.setDepartUid(parentDepartment.getDepartUid());
+			return searchByLeaderOfPreActivityUser(sysUser);//继续递归查询上级部门的用户
+		}
+	}
+
+
+
+	@Override
+	public List<SysUser> searchByField(JSONObject mergedFormData, String field) {
+		List<SysUser> sysUserList = new ArrayList<>();
+		if (StringUtils.isBlank(field) || mergedFormData == null) {
+			return sysUserList;
+		}
+		JSONObject fieldJson = mergedFormData.getJSONObject(field);
+		if (fieldJson == null) {
+			return sysUserList;
+		}
+		String idValue = fieldJson.getString("value");
+		if (StringUtils.isBlank(idValue)) {
+			return sysUserList;
+		}
+		String[] strArr = idValue.split(";");
+		Set<String> tempValues = new HashSet<>();
+		for (String str : strArr) {
+			if (StringUtils.isNotBlank(str)) {
+				tempValues.add(str.trim());
+			}
+		}
+		if (tempValues.isEmpty()) {
+			return sysUserList;
+		} else {
+			return sysUserMapper.listByPrimaryKeyList(tempValues);
+		}
+	}
+
+
+
+	/**
+	 * 将包含重复id的字符串转换为用户列表，并去除重复<br/>
+	 * @param tempIdStr  uid1;uid2uid3;
+	 * @return
+	 */
+	private List<SysUser> transformTempIdStrToUserList(String tempIdStr) {
+		List<SysUser> resultList = null;
+		if (StringUtils.isNotBlank(tempIdStr)) {
+			// 去重
+			List<String> tempList = new ArrayList<>();
+			String[] temArr = tempIdStr.split(";");
+			for (String str : temArr) {
+				if (StringUtils.isNotBlank(str) && !tempList.contains(str)) {
+					// 对id去重后添加
+					tempList.add(str);
+				}
+			}
+			if (!tempList.isEmpty()) {
+				resultList = sysUserMapper.listByPrimaryKeyList(tempList);
+
+			}
+		}
+		return resultList == null ? new ArrayList<>() : resultList;
+	}
+	
+	private List<SysUser> listByUserUidsOrStaions(Collection<String> userUids, Collection<String> stations){
+	    // todo auron
+        return null;
 	}
 }

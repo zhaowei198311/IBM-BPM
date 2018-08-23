@@ -71,11 +71,11 @@
 			<div id="pagination"></div>
 		</div>
 		<div class="display_container">
-		<div class="display_content">
+		<div class="display_content" style="height: 312px;">
 			<div class="top">
 				新建角色
 			</div>
-			<div class="middle">
+			<div class="middle" style="height:227px;">
 				<form class="layui-form form-horizontal" action="sysRole/addSysRole" method="post" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
@@ -83,13 +83,19 @@
 				      <input type="text" name="roleName"   lay-verify="required" remote="sysRole/roleexists" data-msg-remote="角色名称已存在请重新输入!"  placeholder="角色名称" autocomplete="off" class="layui-input required">
 				    </div>
 				  </div>
-				  
+					<div class="layui-form-item">
+						<label class="layui-form-label">相关岗位</label>
+						<div class="layui-input-block">
+							<input type="text" name="station"  value="" autocomplete="off"  placeholder='如有多个岗位，以";"分隔' class="layui-input">
+						</div>
+					</div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">描述</label>
 				    <div class="layui-input-block">
 				      <input type="text" name="describe"  value="" autocomplete="off" placeholder="描述" class="layui-input">
 				    </div>
 				  </div>
+
 				  
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
@@ -112,11 +118,11 @@
 		</div>
 	</div>
 	<div class="display_container1">
-		<div class="display_content1">
+		<div class="display_content1"  style="height: 312px;">
 			<div class="top">
 				编辑角色
 			</div>
-			<div class="middle">
+			<div class="middle" style="height:227px;">
 				<form class="layui-form form-horizontal" action="sysRole/updateSysRole"  method="post" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
@@ -124,7 +130,12 @@
 				      <input type="text" name="roleName" required  lay-verify="required"  id="roleName" remote="sysRole/roleexists"   data-msg-remote="角色名称已存在请重新输入!" value="角色名称" autocomplete="off" class="layui-input">
 				    </div>
 				  </div>
-				  
+					<div class="layui-form-item">
+						<label class="layui-form-label">相关岗位</label>
+						<div class="layui-input-block">
+							<input type="text" name="station"  value="" autocomplete="off"  placeholder='如有多个岗位，以";"分隔' class="layui-input">
+						</div>
+					</div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">描述</label>
 				    <div class="layui-input-block">

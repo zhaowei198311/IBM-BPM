@@ -30,8 +30,17 @@ public class SysRoleUser {
     
     //不在表内
     private List<SysDepartment> sysDepartmentList;
-    private List<String> roleIdList; 
-    
+    private List<String> roleIdList;
+    private String station;
+
+
+    public String getStation() {
+        return station;
+    }
+
+    public void setStation(String station) {
+        this.station = station;
+    }
 
     public List<SysUser> getUsers() {
 		return users;

@@ -29,4 +29,11 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
 	List<SysUser> allSysUserMove(@Param("userUidArr")String[] userUidArr, @Param("condition")String condition);
 
+	/**
+	 * 查询工号或岗位符合要求的员工
+	 * @return
+	 */
+	List<SysUser> listByUserUidsOrStations(@Param(value="userUids")Collection<String> userUids,
+										   @Param(value="stations")Collection<String> stations);
+
 }
