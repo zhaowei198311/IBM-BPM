@@ -1186,26 +1186,8 @@ var common = {
     		pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
     	}
     	return pwd;
-    }, 
-    //根据SAP编码带出门店主数据
-    bySAPCodeQuery(I_WERKS,parameterMap){
-		$.ajax({
-  		    type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
-  		    dataType : 'json',
-  		    url : common.getPath()+'interfaceExecute/bySAPCodeQuery',
-  		    data :JSON.stringify({"I_WERKS":I_WERKS}),
-  		    contentType:'application/json;charset=UTF-8',
-  		    success : function(result) {
-	  		     if (result.success) {
-	  		    	var data = $.parseJSON(result.obj.responseBody);
-	  		    	var E_DATA =data.Body["ZIFSD_TBPM_GET_PLANT.Response"]["E_DATA"];
-	  		    	for( var attr in parameterMap){
-	  		    		$('input[name="'+parameterMap[attr]+'"]').val(E_DATA[attr]);
-				    }
-	  		     }
-  		    	}
-  		   });
-	}
+    }
+    
 };
 function rmoney(s)  
 {  
@@ -1344,4 +1326,26 @@ function chooseUsersChange(obj,name){
 	var endIndex = $(obj).val().indexOf(")", startIndex);
 	var userUid = $(obj).val().substring(startIndex + 1, endIndex);
 	getSysUser(userUid,name);
+}
+
+
+
+//根据SAP编码带出门店主数据
+function bySAPCodeQuery(I_WERKS,parameterMap){
+	$.ajax({
+		    type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
+		    dataType : 'json',
+		    url : common.getPath()+'interfaceExecute/bySAPCodeQuery',
+		    data :JSON.stringify({"I_WERKS":I_WERKS}),
+		    contentType:'application/json;charset=UTF-8',
+		    success : function(result) {
+  		     if (result.success) {
+  		    	var data = $.parseJSON(result.obj.responseBody);
+  		    	var E_DATA =data.Body["ZIFSD_TBPM_GET_PLANT.Response"]["E_DATA"];
+  		    	for( var attr in parameterMap){
+  		    		$('input[name="'+parameterMap[attr]+'"]').val(E_DATA[attr]);
+			    }
+  		     }
+		    	}
+		   });
 }
