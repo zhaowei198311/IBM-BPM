@@ -323,6 +323,13 @@ function drawPage() {
 						if (subDivObj.find("label").length == 0) {
 							if ($(subDivObj).next().prop("class") == "hidden-value") {
 								subHtml = $(subDivObj).html() + $(subDivObj).next().html();
+							} else if(subDivObj.find("textarea").length>0){
+								var id = subDivObj.find("textarea").attr("id");
+								var name = subDivObj.find("textarea").attr("name");
+								var rows = subDivObj.find("textarea").attr("rows");
+								var col = subDivObj.find("textarea").attr("col");
+								var className = subDivObj.find("textarea").attr("class");
+								subHtml = '<textarea id="'+id+'" name="'+name+'" rows="'+rows+'" col="'+col+'" class="'+className+'"></textarea>';
 							} else {
 								subHtml = $(subDivObj).html();
 							}
@@ -377,6 +384,13 @@ function drawPage() {
 						if (subDivObj.find("label").length == 0) {
 							if ($(subDivObj).next().prop("class") == "hidden-value") {
 								subHtml = $(subDivObj).html() + $(subDivObj).next().html();
+							} else if(subDivObj.find("textarea").length>0){
+								var id = subDivObj.find("textarea").attr("id");
+								var name = subDivObj.find("textarea").attr("name");
+								var rows = subDivObj.find("textarea").attr("rows");
+								var col = subDivObj.find("textarea").attr("col");
+								var className = subDivObj.find("textarea").attr("class");
+								subHtml = '<textarea id="'+id+'" name="'+name+'" rows="'+rows+'" col="'+col+'" class="'+className+'"></textarea>';
 							} else {
 								subHtml = $(subDivObj).html();
 							}
