@@ -1325,8 +1325,9 @@ function bySAPCodeQuery(I_WERKS,parameterMap){
   		    	var data = $.parseJSON(result.obj.responseBody);
   		    	var E_DATA =data.Body["ZIFSD_TBPM_GET_PLANT.Response"]["E_DATA"];
   		    	for( var attr in parameterMap){
-  		    		$('input[name="'+parameterMap[attr]+'"]').val(E_DATA[attr]);
+  		    		$('[name="'+parameterMap[attr]+'"]').val(E_DATA[attr]);
 			    }
+  		    	form.render();
   		     }
 		    	}
 		   });
