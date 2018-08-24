@@ -151,11 +151,12 @@ function drawUpRoutingRecord(result){
 	 $("#routingRecordTbody").empty();
 	 var info ="";
 	 var currentTaskMap = result.data.currentTaskMap;
-	 for(let k of Object.keys(currentTaskMap)){
+	 for(let k in currentTaskMap){
 		 let datDhRoutingRecord = currentTaskMap[k];
 		 let currActivityMeta = datDhRoutingRecord.bpmActivityMeta;//获得环节信息
 		 let currDhTaskInstanceList = datDhRoutingRecord.dhTaskInstanceList;//获得环节对应的任务信息
-		 for(let dhTaskInstance of currDhTaskInstanceList){
+		 for(let i = 0;i<currDhTaskInstanceList.length;i++){
+			 let dhTaskInstance = currDhTaskInstanceList[i];
 			 let tr = "<tr>"
 			 +"<td>"+currActivityMeta.sortNum+"</td><td>";
 			 if(dhTaskInstance.taskAgentUserName != null && dhTaskInstance.taskAgentUserName.trim()!=''){
