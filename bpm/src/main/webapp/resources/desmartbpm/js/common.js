@@ -52,9 +52,6 @@ var common = {
     	        });
     	    }
     	}); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     chooseUser: function(elementId, isSingle) {
     	var index=layer.open({
@@ -62,7 +59,7 @@ var common = {
     	    title: '选择人员',
     	    shadeClose: true,
     	    shade: 0.3,
-    	    area: ['620px', '480px'],
+    	    area: ['750px', '480px'],
     	    content: common.chooseUserPath(elementId, isSingle),
     	    success: function (layero, lockIndex) {
     	        var body = layer.getChildFrame('body', lockIndex);
@@ -71,9 +68,6 @@ var common = {
     	        });
     	    }
     	}); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     chooseRole: function(elementId, isSingle) {
     	var index = layer.open({
@@ -93,9 +87,6 @@ var common = {
                 });
             }
         }); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     chooseTeam: function(elementId, isSingle) {
         var index = layer.open({
@@ -115,9 +106,6 @@ var common = {
                 });
             }
         }); 
-        layer.style(index, {
-        	zoom:1.1
-        });
     },
     //选择数据字典分类的路径
     chooseDictionaryPath:function(id) {
@@ -141,9 +129,6 @@ var common = {
                 });
             }
         }); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     //选择数据字典内容的路径
     chooseDicDataPath:function(id,dicUid) {
@@ -167,9 +152,6 @@ var common = {
                 });
             }
         }); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     //选择公共的子表单关联
     choosePublicFormPath:function(id,formUid) {
@@ -313,9 +295,6 @@ var common = {
 	                maxmin:true,
 	                area: ['890px', '570px'],
 	                content: result
-	            });
-	            layer.style(index, {
-	            	zoom:1.1
 	            });
 	        }
 	    });

@@ -30,9 +30,6 @@ function textInterface(intUid,intTitle,paraInOut){
             });
         }
     });
-    layer.style(index, {
-    	zoom:1.1
-    });
 }
 
 function search(form){

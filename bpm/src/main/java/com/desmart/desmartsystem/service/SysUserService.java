@@ -47,7 +47,12 @@ public interface SysUserService extends BaseService<SysUser> {
 	 */
 	List<SysUser> login(String username, String password);
 
-	
+	/**
+	 * PC端模糊查询用户
+	 * @param condition
+	 * @return
+	 */
+	ServerResponse querySysUserByConditionPC(String condition);
 	
 	/**
 	 * 移动端模糊查询全部用户并分页

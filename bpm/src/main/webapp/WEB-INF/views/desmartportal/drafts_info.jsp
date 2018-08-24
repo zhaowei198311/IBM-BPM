@@ -333,9 +333,6 @@
 				});
 			}
 		});
-		layer.style(index, {
-	    	zoom:1.1
-	    });
 	}
 
 	function deleteDraftsInfo(id) {

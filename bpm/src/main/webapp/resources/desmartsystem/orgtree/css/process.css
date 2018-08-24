@@ -1,0 +1,51 @@
+	.delivery-info {
+		border-bottom: 1px solid #eee;
+		font-size: 0;
+		margin-top: 12px;
+		padding-bottom: 28px;
+	}
+	.delivery-snippet {
+		float: left;
+		margin-left: -1px;
+	}
+	.delivery-snippet .snippet-header {
+		display: table;
+		position: relative;
+	}
+	.delivery-snippet .snippet-header .square {
+		display: table-cell;
+		vertical-align: middle;
+		width: 50%;
+	}
+	.delivery-snippet .nick-selected .round {
+		background: url("../img/no.png") no-repeat;
+	}
+	
+	.delivery-snippet .nick-selected .return {
+		background: url("../img/yes.png") no-repeat;
+	}
+	
+	.delivery-snippet .round {
+		height: 24px;
+		margin: auto;
+		width: 24px;
+	}
+	
+	.delivery-snippet .return {
+		height: 24px;
+		margin: auto;
+		width: 24px;
+	}
+	
+	.delivery-snippet .snippet-body {
+		font-size: 14px;
+		padding: 10px 0;
+		text-align: center;
+	}
+	.delivery-snippet .nick-selected .line-through {
+		border-bottom: 3px solid #64b93c;
+	}
+	.delivery-snippet .nick-selected .last-selected {
+		border-bottom: 3px solid #ddd;
+	}
+	

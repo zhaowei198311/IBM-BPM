@@ -3,6 +3,7 @@ package com.desmart.desmartsystem.service;
 import java.util.List;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartsystem.entity.JSTreeNode;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.TreeNode;
 import com.desmart.desmartsystem.util.PagedResult;
@@ -32,6 +33,13 @@ public interface SysDepartmentService extends BaseService<SysDepartment> {
      * @param SysDepartment
      */
 	public List<TreeNode> selectTree(TreeNode entity);
+	
+	/**
+	 * 根据传入父级部门的id查询父级部门信息以及子级部门
+	 * @param department 
+	 * @return
+	 */
+	public List<JSTreeNode> selectDepartmentTreeNodeByParent(String id);
 	
 	/**
      * 根据

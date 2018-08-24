@@ -6,7 +6,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     if(actcAssignType=='allUser'||actcChooseableHandlerType=='allUser'){
     	area=['640px', '480px'];
     }else{
-    	area=['370px', '430px'];
+    	area=['515px', '480px'];
     }
     console.log(actcAssignType);
     console.log(actcChooseableHandlerType);
@@ -27,9 +27,6 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
                 //location.reload();//刷新
             });
         }
-    });
-    layer.style(index, {
-    	zoom:1.1
     });
 }
 

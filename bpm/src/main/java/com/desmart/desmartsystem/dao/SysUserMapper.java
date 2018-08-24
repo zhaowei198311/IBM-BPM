@@ -27,6 +27,8 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
 	List<SysUser> login(@Param(value="username")String username, @Param(value="password")String password);
 
+	List<SysUser> querySysUserByConditionPC(String condition);
+	
 	List<SysUser> allSysUserMove(@Param("userUidArr")String[] userUidArr, @Param("condition")String condition);
 
 	/**

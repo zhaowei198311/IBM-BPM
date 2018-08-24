@@ -140,6 +140,14 @@
 	  	order by u.user_uid
 	  </select>
 	  
+	  <select id="querySysUserByConditionPC" parameterType="string" resultMap="BaseResultMap">
+	  	select * from sys_user 
+	  	<where>
+		  	user_uid like '%'||#{condition}||'%'
+		  	or user_name like '%'||#{condition}||'%'
+	  	</where>
+	  </select>
+	  
 	  <select id="listByPrimaryKeyList" parameterType="collection"  resultMap="BaseResultMap">
 	  		select * from sys_user 
 	  		where

@@ -114,6 +114,12 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 
 	@Override
+	public ServerResponse querySysUserByConditionPC(String condition) {
+		List<SysUser> userList = sysUserMapper.querySysUserByConditionPC(condition);
+		return ServerResponse.createBySuccess(userList);
+	}
+	
+	@Override
 	public ServerResponse allSysUserMove(String userUidArrStr, Integer pageNo, Integer pageSize, String condition) {
 		PageHelper.startPage(pageNo,pageSize);
 		String[] userUidArr = userUidArrStr.split(";");
