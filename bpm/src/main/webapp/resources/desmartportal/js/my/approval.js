@@ -517,12 +517,12 @@ function checkUserData() {
     if(!common.validateRegx()){
     	return;
     }
-    //表单提交验证方法，可在设计表单时重构
-    if(!check_before_submit()){
-    	return;
-    }
     if(needApprovalOpinion && (aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined)){
         alertNeedApprovalOpinion();
+    	return;
+    }
+    //表单提交验证方法，可在设计表单时重构
+    if(!check_before_submit()){
     	return;
     }
     if (canSkipFromReject) {
