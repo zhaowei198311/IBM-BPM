@@ -34,12 +34,13 @@ $(function () {
     userAsync();
     
     departAsync();
-    
-    checkUserData();
-    var isReject = $("#isReject").val();
-    if(isReject!="FALSE"){
-    	queryRejectByActivitiy();
-    }
+    $("#mobile_approval_li").click(function(){
+    	checkUserData();
+    	var isReject = $("#isReject").val();
+        if(isReject!="FALSE"){
+        	queryRejectByActivitiy();
+        }
+    })
     //点击通过
     /*$("#submit_btn").click(function(){
     	checkUserData();
@@ -637,13 +638,8 @@ function submitTask() {
     var taskId = $("#taskId").val();
     var taskUid = $("#taskUid").val();
     var insUid = $("#insUid").val();//流程实例id--ins_uid
-    var departNo = $("#departNo").val();
-    var companyNumber = $("#companyNum").val();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
-    	layer.alert("缺少流程发起人信息");
-    	return;
-    }
+    
     // 获取审批意见
     var aprOpiComment = $("#myApprovalOpinion").val();
     console.log($("#myApprovalOpinion").val());
@@ -653,28 +649,7 @@ function submitTask() {
     }else{
     	aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
     }
-    // 校验标题有没有填写
-    if (!checkInsTitle()) {
-    	$(".mobile_menu li").css({"color":"#A0A0A0"});
-    	$(".mobile_menu #form_content").parent().css({"color":"#009688"});
-    	var id = $(".mobile_menu #form_content").attr("title");
-    	$(".middle_content").css("display","none");
-    	$("#"+id+"_div").css("display","block");
-        layer.alert("流程主题过长或未填写");
-        return
-    }
-    //必填项验证，勿删
-    if(!common.validateFormMust("startProcess_btn")){
-    	return;
-    }
-    //表单组件正则验证
-    if(!common.validateRegx()){
-    	return;
-    }
-    //表单提交验证方法，可在设计表单时重构
-    if(!check_before_submit()){
-    	return;
-    }
+    
     // 发起流程             
     var finalData = {};
     // 表单数据
@@ -1023,8 +998,35 @@ var view = $(".container-fluid");
 var form = null;
 
 
-// 单击"提交"按钮
+// 单击"审批"按钮
 function checkUserData() {
+	var departNo = $("#departNo").val();
+    var companyNumber = $("#companyNum").val();
+	if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
+    	layer.alert("缺少流程发起人信息");
+    	return;
+    }
+    // 校验标题有没有填写
+    if (!checkInsTitle()) {
+    	$(".mobile_menu li").css({"color":"#A0A0A0"});
+    	$(".mobile_menu #form_content").parent().css({"color":"#009688"});
+    	var id = $(".mobile_menu #form_content").attr("title");
+    	$(".middle_content").css("display","none");
+    	$("#"+id+"_div").css("display","block");
+        layer.alert("流程主题过长或未填写");
+        return
+    }
+    //必填项验证，勿删
+    if(!common.validateFormMust("startProcess_btn")){
+    	return;
+    }
+    //表单组件正则验证
+    if(!common.validateRegx()){
+    	return;
+    }//表单提交验证方法，可在设计表单时重构
+    if(!check_before_submit()){
+    	return;
+    }
     if (canSkipFromReject) {
         showRouteBarForSkipFromReject();
     } else {
@@ -1050,9 +1052,25 @@ function showRouteBar() {
         },
         success:function(result){
             if(result.status==0){
-                $("#submit_table table").empty();
                 var activityMetaList = result.data;
                 var chooseUserDiv = "";
+                var taskActivityNameDiv = $("#submit_table").find(".task_activity_name");
+                var count = 0;
+                for(var i=0;i<taskActivityNameDiv.length;i++){
+                	var taskActiviName = $(taskActivityNameDiv[i]).text().trim();
+                    for(var j=0;j<activityMetaList.length;j++){
+                    	var activiName = activityMetaList[j].activityName;
+                    	if(taskActiviName==activiName){
+                        	count ++;
+                        }
+                    }
+                }
+                if(count==activityMetaList.length){
+                   console.log(1.2);
+                   return;
+                }
+                console.log(2);
+                $("#submit_table").empty();
                 if(activityMetaList.length==0){
                 	chooseUserDiv += '<div class="title_p" style="min-height: 15px;"><div style="float:left">下一环节</div>'
 						+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
