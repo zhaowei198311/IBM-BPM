@@ -44,7 +44,7 @@
 				<li class="layui-this">
 					<p>内容</p>
 				</li>
-				<li>
+				<li id="mobile_approval_li">
 					<p>审批</p>
 				</li>
 				<li>
