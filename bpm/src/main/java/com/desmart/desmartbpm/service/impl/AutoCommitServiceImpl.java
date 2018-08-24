@@ -76,13 +76,13 @@ public class AutoCommitServiceImpl implements AutoCommitService {
 
     /**
      * 自动提交指定任务
-     * @param currTask
+     * @param currTaskInstance
      * @param bpmGlobalConfig
      */
-    public void doAutoCommitTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
-        BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
+    public void doAutoCommitTask(DhTaskInstance currTaskInstance, BpmGlobalConfig bpmGlobalConfig) {
+        BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTaskInstance.getTaskActivityId());
         if (currTaskNode == null) {
-            throw new DhTaskCheckException("自动提交失败，找不到任务节点，taskUid：" + currTask.getTaskUid());
+            throw new DhTaskCheckException("自动提交失败，找不到任务节点，taskUid：" + currTaskInstance.getTaskUid());
         }
         DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
         if (!"TRUE".equals(currTaskConf.getActcCanAutocommit())) {
@@ -92,7 +92,7 @@ public class AutoCommitServiceImpl implements AutoCommitService {
                 || !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
             return;
         }
-        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTaskInstance.getInsUid());
         if (dhProcessInstance == null) {
             throw new DhTaskCheckException("自动提交失败，流程实例不存在");
         }
@@ -126,22 +126,22 @@ public class AutoCommitServiceImpl implements AutoCommitService {
             throw new PlatformException("自动提交失败，缺少默认处理人");
         }
         // 保存流转记录
-        DhRoutingRecord dhRoutingRecord = dhRoutingRecordService.generateAutoCommitRoutingRecord(currTask,
+        DhRoutingRecord dhRoutingRecord = dhRoutingRecordService.generateAutoCommitRoutingRecord(currTaskInstance,
                 nextTaskNode, bpmGlobalConfig.getBpmAdminName());
         dhRoutingRecordService.saveDhRoutingRecord(dhRoutingRecord);
         // 如果需要填写审批意见，保存审批意见
         if ("TRUE".equals(currTaskConf.getActcCanApprove())) {
-            dhApprovalOpinionService.saveDhApprovalOpinionWhenAutoCommitUserTask(currTask, bpmGlobalConfig.getBpmAdminName());
+            dhApprovalOpinionService.saveDhApprovalOpinionWhenAutoCommitUserTask(currTaskInstance, bpmGlobalConfig.getBpmAdminName());
         }
         // 改变当前任务状态
-        dhTaskInstanceService.updateDhTaskInstanceWhenAutoCommit(currTask, originalUser);
+        dhTaskInstanceService.updateDhTaskInstanceWhenAutoCommit(currTaskInstance, originalUser);
 
         String assignVariable = currTaskConf.getActcAssignVariable();
         CommonBusinessObject pubBo = new CommonBusinessObject(dhProcessInstance.getInsId());
         CommonBusinessObjectUtils.setNextOwners(assignVariable, pubBo, DataListUtils.transformUserListToUserIdList(defaultTaskOwnerList));
 
         BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
-        Map<String, HttpReturnStatus> commitTaskReturn = taskUtil.commitTask(currTask.getTaskId(), pubBo, null);
+        Map<String, HttpReturnStatus> commitTaskReturn = taskUtil.commitTask(currTaskInstance.getTaskId(), pubBo, null);
         Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(commitTaskReturn);
         if (errorMap.get("errorResult") != null) {
             throw new PlatformException("自动提交失败, 调用RESTful API 完成任务失败");

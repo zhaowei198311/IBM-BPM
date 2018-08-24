@@ -490,7 +490,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcMailNotifyTemplate(null); // 邮件通知模版
         conf.setActcCanReject(Const.Boolean.FALSE); // 是否允许驳回
         conf.setActcRejectType(DhActivityConfRejectType.TO_PRE_ACTIVITY.getCode()); // 驳回类型
-        conf.setActcCanRevoke(Const.Boolean.TRUE); // 是否可以取回
+        conf.setActcCanRevoke(Const.Boolean.FALSE); // 是否可以取回
         conf.setActcCanAutocommit(Const.Boolean.FALSE); // 是否允许自动提交
         conf.setActcCanAdd(Const.Boolean.TRUE); // 是否允许加签
         conf.setActcCanUserToField(Const.Boolean.FALSE); // 略

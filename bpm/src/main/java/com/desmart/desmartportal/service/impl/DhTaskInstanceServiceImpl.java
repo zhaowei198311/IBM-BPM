@@ -88,6 +88,7 @@ import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.util.CollectionUtils;
 
 
 @Service
@@ -501,12 +502,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		dhRouteService.saveTaskHandlerOfLoopTask(insId, bpmRoutingData, pubBo);
 
         // 更新网关决策条件
-        if (bpmRoutingData.getGatewayNodes().size() > 0) {
-			ServerResponse updateResponse = threadPoolProvideService.updateRouteResult(insId, bpmRoutingData);
-            if (!updateResponse.isSuccess()) {
-                throw new PlatformException("更新网关决策中间表失败");
-            }
-        }
+        dhRouteService.updateGatewayRouteResult(insId, bpmRoutingData);
 
         // 完成任务
         DataForSubmitTask dataForSubmitTask = new DataForSubmitTask();
@@ -1915,15 +1911,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 
         // 得到下个环节任务信息
-        List<DhTaskInstance> tasksOnAfterNode = listTasksOnBpmActivityMeta(finishedTaskInstance.getInsUid(), routingRecordOfTask.getActivityTo());
-        if (tasksOnAfterNode == null || tasksOnAfterNode.isEmpty()) {
+        List<DhTaskInstance> tasksOnAfterNode = findTasksByInsUidAndActivityId(finishedTaskInstance.getInsUid(),
+				nodeAfterTaskNode.getActivityId());
+
+        if (CollectionUtils.isEmpty(tasksOnAfterNode)) {
             return null;
         }
+
         Iterator<DhTaskInstance> iterator = tasksOnAfterNode.iterator();
         // 去除此任务提交前就产生的任务
         while (iterator.hasNext()) {
             DhTaskInstance task = iterator.next();
-            if (task.getTaskInitDate().getTime() < finishedTaskInstance.getTaskFinishDate().getTime()) {
+            if (task.getTaskId() < finishedTaskInstance.getTaskId()) {
                 iterator.remove();
             } else {
                 if (!DhTaskInstance.STATUS_RECEIVED.equals(task.getTaskStatus())) {
@@ -1960,6 +1959,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForRevoke.setFinishedTask(finishedTaskInstance);
         return dataForRevoke;
     }
+
+
+	private List<DhTaskInstance> findTasksByInsUidAndActivityId(String insUid, String activityId) {
+    	DhTaskInstance taskSelective = new DhTaskInstance();
+    	taskSelective.setInsUid(insUid);
+    	taskSelective.setTaskActivityId(activityId);
+    	return dhTaskInstanceMapper.listBySelectiveWithBaseColumn(taskSelective);
+	}
 
 	/**
 	 * 获得跳转到驳回关节需要的信息，如果不能跳转到驳回环节返null
@@ -2125,14 +2132,42 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 	}
 
-	// todo yao
-//	public DataForSubmitTask prepareDataForSubmitAutoCommitTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig)
-//		throws DhTaskCheckException {
-//
-//
-//
-//
-//	}
+
+	public DataForSubmitTask prepareDataForSubmitAutoCommitTask(DhTaskInstance currTaskInstance, BpmGlobalConfig bpmGlobalConfig)
+		throws DhTaskCheckException {
+		BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTaskInstance.getTaskActivityId());
+		if (currTaskNode == null) {
+			throw new DhTaskCheckException("自动提交失败，找不到任务节点，taskUid：" + currTaskInstance.getTaskUid());
+		}
+		DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
+		if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
+				|| !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
+			throw new DhTaskCheckException("自动提交失败，任务不是简单任务而是循环任务");
+		}
+
+		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTaskInstance.getInsUid());
+		if (dhProcessInstance == null) {
+			throw new DhTaskCheckException("自动提交失败，流程实例不存在");
+		}
+		String activityTo = currTaskNode.getActivityTo();
+		if (StringUtils.isBlank(activityTo) || activityTo.contains(",")) {
+			throw new DhTaskCheckException("下个环节不存在或存在多个下个环节，不适用自动提交");
+		}
+
+		// 获得下个节点信息, 下个环节是普通的人员节点
+		BpmActivityMeta nextTaskNode = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityTo, currTaskNode.getParentActivityId(),
+				currTaskNode.getSnapshotId());
+		if (nextTaskNode == null) {
+			throw new DhTaskCheckException("查询下个环节失败");
+		}
+		if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(nextTaskNode.getBpmTaskType())
+				|| !BpmActivityMeta.LOOP_TYPE_NONE.equals(nextTaskNode.getLoopType())) {
+			return null;
+		}
+        // todo
+
+		return null;
+	}
 
 
 
