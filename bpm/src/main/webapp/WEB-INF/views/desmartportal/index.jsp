@@ -154,7 +154,6 @@
 									门店生命周期
 								</span>
 							</div>
-							<br>
 							<div class="ul_li">
 								<ul>
 								
@@ -167,7 +166,6 @@
 									一级菜单1
 								</span>
 							</div>
-							<br>
 							<div class="ul_li">
 								<ul>
 									
@@ -183,7 +181,6 @@
 									二级菜单1
 								</span>
 							</div>
-							<br>
 							<div class="ul_li">
 								<ul>
 									
@@ -196,7 +193,6 @@
 									三级级菜单1
 								</span>
 							</div>
-							<br>
 							<div class="ul_li">
 								<ul>
 									

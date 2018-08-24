@@ -2,7 +2,7 @@
 .menu_container ul li{list-style:none;height:40px;line-height:40px;filter:Alpha(opacity=65);cursor:pointer;padding-left:10px;/* opacity:0.65; 8-22改*/}
 .menu_container .ul_li{min-width:200px;overflow-y:auto;height:250px;}
 .menu{margin-right:5px;height:300px;float:left;padding-left:10px;background:#001529;color:#fff;opacity:1;filter:Alpha(opacity=100);/* width:200px; 8-22改*/}
-.menu_title{width:190px;height:40px;line-height:40px;padding-left:10px;border-bottom:1px solid #95999e;}
+.menu_title{min-width:190px;height:40px;line-height:40px;padding-left:10px;border-bottom:1px solid #95999e;}
 .menu_title_span{border-left:2px solid #1890FF;padding-left:10px;}
 .menu_container ul .active{color: #1890FF;opacity:1;filter:Alpha(opacity=100);}
 .menu_container ul li:hover{color: #1890FF;opacity:1;filter:Alpha(opacity=100);}
