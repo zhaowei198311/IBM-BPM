@@ -19,6 +19,8 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -426,7 +428,6 @@ public class DhRouteServiceImpl implements DhRouteService {
 					|| BpmActivityMeta.LOOP_TYPE_MULTI_INSTANCE_LOOP.equals(loopType)) {
 				CommonBusinessObjectUtils.setOwnerSignCount(signCountVarName, pubBo, userIdList.size());
 			}
-
 		}
 		return ServerResponse.createBySuccess(pubBo);
 	}
@@ -495,7 +496,6 @@ public class DhRouteServiceImpl implements DhRouteService {
             if (dhTaskInstance == null) {
                 return ServerResponse.createByErrorMessage("任务不存在");
             }
-
         }
 
 		List<SysUser> resultList = new ArrayList<>();
@@ -511,8 +511,7 @@ public class DhRouteServiceImpl implements DhRouteService {
         // 上个环节处理人的上级
         if (assignTypeEnum == DhActivityConfAssignType.LEADER_OF_PRE_ACTIVITY_USER) {
             SysUser preTaskUser = sysUserMapper.queryByPrimaryKey(preTaskOwner);
-            resultList.addAll(sysUserService.searchByLeaderOfPreActivityUser(preTaskUser));
-            return ServerResponse.createBySuccess(resultList);
+            return ServerResponse.createBySuccess(sysUserService.searchByLeaderOfPreActivityUser(preTaskUser));
         }
 
         // 流程发起人
@@ -559,31 +558,7 @@ public class DhRouteServiceImpl implements DhRouteService {
             }
             formJson = FormDataUtil.formDataCombine(newObj, JSONObject.parseObject(insDate).getJSONObject("formData"));
             String field = objIdList.get(0);
-            JSONObject fieldJson = formJson.getJSONObject(field);
-            if (fieldJson == null) {
-                return ServerResponse.createBySuccess(resultList);
-            }
-            String idValue = fieldJson.getString("value");
-            if (idValue == null) {
-                return ServerResponse.createBySuccess(resultList);
-            }
-            String[] strArr = idValue.split(";");
-            List<String> tempValueList = new ArrayList<>();
-            for (String str : strArr) {
-                if (StringUtils.isNotBlank(str)) {
-                    tempValueList.add(str.trim());
-                }
-            }
-            if (tempValueList.isEmpty()) {
-                return ServerResponse.createBySuccess(resultList);
-            }
-            List<SysUser> sysUsers = sysUserMapper.listByPrimaryKeyList(tempValueList);
-            for (SysUser sysUser : sysUsers) {
-                if (!resultList.contains(sysUser)) {
-                    resultList.add(sysUser);
-                }
-            }
-			break;
+			return ServerResponse.createBySuccess(sysUserService.searchByField(formJson, field));
 		case BY_TRIGGER:// 根据触发器选择
 			String triUid = objIdList.get(0);
 			WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
@@ -611,9 +586,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return ServerResponse.createBySuccess(resultList);
 	}
 
-
-
     @Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
     public ServerResponse updateGatewayRouteResult(Integer insId, BpmRoutingData routingData) {
 		List<BpmActivityMeta> gatewayNodes = routingData.getGatewayNodes();
         // 删除这些网关对应的路由结果

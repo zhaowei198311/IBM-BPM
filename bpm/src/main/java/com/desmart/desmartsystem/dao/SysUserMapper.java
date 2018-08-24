@@ -38,4 +38,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 	List<SysUser> listByUserUidsOrStations(@Param(value="userUids")Collection<String> userUids,
 										   @Param(value="stations")Collection<String> stations);
 
+	
+
 }

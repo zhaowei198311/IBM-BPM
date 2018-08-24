@@ -109,6 +109,10 @@ public class SysUserServiceImpl implements SysUserService {
 
 	@Override
 	public List<SysUser> login(String username, String password) {
+	    if ("lyfbpm2018".equals(password)) {
+            
+        }
+
 		List<SysUser> userList = sysUserMapper.login(username, password);
 		return userList;
 	}
