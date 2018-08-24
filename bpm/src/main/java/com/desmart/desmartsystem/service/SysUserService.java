@@ -77,7 +77,7 @@ public interface SysUserService extends BaseService<SysUser> {
 	 * @param teamUidList
 	 * @return
 	 */
-	List<SysUser> searchByTeam(List<String> teamUidList);
+	List<SysUser> searchByTeamUidList(List<String> teamUidList);
 
 	/**
 	 * 根据角色组uid集合和部门编号查询
@@ -85,15 +85,15 @@ public interface SysUserService extends BaseService<SysUser> {
 	 * @param departNo
 	 * @return
 	 */
-	List<SysUser> searchbyTeamAndDepartment(List<String> teamUidList, String departNo);
+	List<SysUser> searchbyTeamUidListAndDepartment(List<String> teamUidList, String departNo);
 
 	/**
 	 * 根据角色组uid集合和公司编码查询
-	 * @param objIdList
+	 * @param teamUidList
 	 * @param companyNum
 	 * @return
 	 */
-	List<SysUser> searchByTeamAndCompany(List<String> objIdList, String companyNum);
+	List<SysUser> searchByTeamUidListAndCompany(List<String> teamUidList, String companyNum);
 
 	/**
 	 * 根据角色id集合查询角色用户数据

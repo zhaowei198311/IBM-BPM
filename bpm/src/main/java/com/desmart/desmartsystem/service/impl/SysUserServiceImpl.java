@@ -351,57 +351,95 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
 	@Override
-	public List<SysUser> searchByTeam(List<String> teamUidList) {
+	public List<SysUser> searchByTeamUidList(List<String> teamUidList) {
 		if(CollectionUtils.isEmpty(teamUidList)) {//查询条件集合为空，则直接返回空集合
 			return new ArrayList<>();
 		}
-		SysTeamMember sysTeamMember = new SysTeamMember();
-		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
-		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-		String tempIdStr = "";
-		for (SysTeamMember member : sysTeamMembers) {
-			tempIdStr += member.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+        List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.listByTeamUids(teamUidList);
+        if (CollectionUtils.isEmpty(sysTeamMembers)) {
+            return new ArrayList<>();
+        }
+        List<String> roleUids = extractRoleUidsFromSysTeamMembers(sysTeamMembers);
+        List<String> userUids = extractUserUidsFromSysTeamMembers(sysTeamMembers);
+        List<SysUser> sysUsersFromRoleUids = null;
+        List<SysUser> sysUsersFromUserUids = null;
+        if (!CollectionUtils.isEmpty(roleUids)) {
+            sysUsersFromRoleUids = searchByRoleUidList(roleUids);
+        } else {
+            sysUsersFromRoleUids = new ArrayList<>();
+        }
+        if (!CollectionUtils.isEmpty(userUids)) {
+            sysUsersFromUserUids = searchByUserUids(userUids);
+        } else {
+            sysUsersFromUserUids = new ArrayList<>();
+        }
+        return combineUsers(sysUsersFromRoleUids, sysUsersFromUserUids);
+	}
+
+    /**
+     * 合并两个集合中的人员，去重
+     * @param sysUsersFromRoleUids
+     * @param sysUsersFromUserUids
+     * @return
+     */
+	private List<SysUser> combineUsers(List<SysUser> sysUsersFromRoleUids, List<SysUser> sysUsersFromUserUids) {
+		Set<String> userUids = new HashSet<>();
+		List<SysUser> result = new ArrayList<>();
+        for (SysUser sysUser : sysUsersFromRoleUids) {
+            if (userUids.add(sysUser.getUserUid())) {
+                result.add(sysUser);
+            }
+        }
+        for (SysUser sysUser : sysUsersFromUserUids) {
+            if (userUids.add(sysUser.getUserUid())) {
+                result.add(sysUser);
+            }
+        }
+        return result;
+    }
+
+    private List<String> extractRoleUidsFromSysTeamMembers(List<SysTeamMember> sysTeamMembers) {
+        List<String> result = new ArrayList<>();
+        if (CollectionUtils.isEmpty(sysTeamMembers)) {
+            return result;
+        }
+        Set<String> tempRoleUids = new HashSet<>();
+        for (SysTeamMember sysTeamMember : sysTeamMembers) {
+            if (SysTeamMember.TYPE_ROLE.equals(sysTeamMember.getMemberType())
+                    && StringUtils.isNotBlank(sysTeamMember.getUserUid())) {
+                tempRoleUids.add(sysTeamMember.getUserUid());
+            }
+        }
+        result.addAll(tempRoleUids);
+        return result;
+    }
+
+    private List<String> extractUserUidsFromSysTeamMembers(List<SysTeamMember> sysTeamMembers) {
+        List<String> result = new ArrayList<>();
+        if (CollectionUtils.isEmpty(sysTeamMembers)) {
+            return result;
+        }
+        Set<String> tempUserUids = new HashSet<>();
+        for (SysTeamMember sysTeamMember : sysTeamMembers) {
+            if (SysTeamMember.TYPE_USER.equals(sysTeamMember.getMemberType())
+                    && StringUtils.isNotBlank(sysTeamMember.getUserUid())) {
+                tempUserUids.add(sysTeamMember.getUserUid());
+            }
+        }
+        result.addAll(tempUserUids);
+        return result;
+    }
+
+	@Override
+	public List<SysUser> searchbyTeamUidListAndDepartment(List<String> teamUidList, String departNo) {
+        List<SysUser> sysUsers = searchByTeamUidList(teamUidList);
+        return filterUserByDepartNo(sysUsers, departNo);
 	}
 
 	@Override
-	public List<SysUser> searchbyTeamAndDepartment(List<String> teamUidList, String departNo) {
-		if(CollectionUtils.isEmpty(teamUidList)) {//查询条件集合为空，则直接返回空集合
-			return new ArrayList<>();
-		}
-		SysTeamMember sysTeamMember = new SysTeamMember();
-		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
-		SysDepartment selective = new SysDepartment();
-		selective.setDepartUid(departNo);
-		//查询当前departNo的父级树节点，包括自己
-		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
-		if(CollectionUtils.isEmpty(sysDepartmentList)) {//查询条件集合为空，则直接返回空集合
-			return new ArrayList<>();
-		}
-		sysTeamMember.setSysDepartmentList(sysDepartmentList);
-		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-		String tempIdStr = "";
-		for (SysTeamMember member : sysTeamMembers) {
-			tempIdStr += member.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
-	}
-
-	@Override
-	public List<SysUser> searchByTeamAndCompany(List<String> objIdList, String companyNum) {
-		if(CollectionUtils.isEmpty(objIdList)) {//查询条件集合为空，则直接返回空集合
-			return new ArrayList<>();
-		}
-		SysTeamMember sysTeamMember = new SysTeamMember();
-		sysTeamMember.setTeamUidList(objIdList);//设置角色组uid集合查询条件
-		sysTeamMember.setCompanyCode(companyNum);
-		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-		String tempIdStr = "";
-		for (SysTeamMember member : sysTeamMembers) {
-			tempIdStr += member.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+	public List<SysUser> searchByTeamUidListAndCompany(List<String> teamUidList, String companyNum) {
+        List<SysUser> sysUsers = searchByTeamUidList(teamUidList);
+        return filterUserByCompanyNum(sysUsers, companyNum);
 	}
 
 
