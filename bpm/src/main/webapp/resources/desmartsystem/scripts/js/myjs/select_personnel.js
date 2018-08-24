@@ -60,8 +60,10 @@ $(document).ready(function () {
     if(window.parent.document.getElementById(elementId).value!=null && window.parent.document.getElementById(elementId).value!=""){
     	var id = window.parent.document.getElementById(elementId).value.split(';');
         var name = window.parent.document.getElementById(elementId + "_view").value.split(';');
-        var dataTitle = $(window.parent.document.getElementById(elementId)).attr("data-title")
-        .split(';');
+        var dataTitle = "";
+        if($(window.parent.document.getElementById(elementId)).attr("data-title")!=null && $(window.parent.document.getElementById(elementId)).attr("data-title")!=""){
+        	dataTitle = $(window.parent.document.getElementById(elementId)).attr("data-title").split(';');
+        }
         for (var i = 0; i < name.length; i++) {
             if (name[i] != '') {
                 var newName = name[i].replace(/\(.*?\)/g, '');
