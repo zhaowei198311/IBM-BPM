@@ -266,9 +266,6 @@ $(function() {
                 });
             }
         });
-        layer.style(index, {
-            zoom: 1.1
-        });
     });
 
 

@@ -1058,6 +1058,7 @@ function showRouteBar() {
 						+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
 						+'<div class="task_activity_name">流程结束</div>'
 						+'</div>';
+                	$("#submit_table").append(chooseUserDiv);
                 }else{
                     for(var i=0;i<activityMetaList.length;i++){
                         var activityMeta = activityMetaList[i];

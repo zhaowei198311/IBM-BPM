@@ -155,9 +155,6 @@
 					area : [ '790px', '580px' ],
 					content : result
 				});
-				layer.style(index, {
-	            	zoom:1.1
-	            });
 			}
 		});
 	}

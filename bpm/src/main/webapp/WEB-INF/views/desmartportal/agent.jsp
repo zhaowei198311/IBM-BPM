@@ -505,9 +505,6 @@
 	    	    	layer.close(lockIndex);
 	    	    }
 			});
-			layer.style(index, {
-		    	zoom:1.1
-		    });
 		});//end click
 		
 		//弹出选择流程信息的弹层
@@ -539,9 +536,6 @@
 	    	    	layer.close(lockIndex);
 	    	    }
 			});
-			layer.style(index, {
-		    	zoom:1.1
-		    });
 		});//end click
 	});
 	

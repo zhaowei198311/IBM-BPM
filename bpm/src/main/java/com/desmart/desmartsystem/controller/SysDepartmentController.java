@@ -2,7 +2,9 @@ package com.desmart.desmartsystem.controller;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartsystem.entity.JSTreeNode;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
@@ -95,6 +98,16 @@ public class SysDepartmentController {
 		return sysDepartmentService.selectTree(treeNode); 
 	}
 	
+	/**
+	 * 根据传入的父级组织id获得子级组织集合
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/selectDepartmentTreeNodeByParent")
+	@ResponseBody
+	public List<JSTreeNode> selectDepartmentTreeNodeByParent(String id){
+		return sysDepartmentService.selectDepartmentTreeNodeByParent(id);
+	}
 	
 	@RequestMapping("/getSysDepartment")
 	@ResponseBody

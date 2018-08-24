@@ -280,9 +280,6 @@
 		                area: ['890px', '570px'],
 		                content: result
 		            });
-		            layer.style(index, {
-		            	zoom:1.1
-		            });
 		        }
 		    });
 		}

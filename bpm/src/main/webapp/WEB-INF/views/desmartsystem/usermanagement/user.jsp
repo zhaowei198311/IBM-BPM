@@ -700,9 +700,6 @@
 	                });
 	            }
 	        }); 
-	    	layer.style(index, {
-	        	zoom:1.1
-	        });
 		}
 		
 		function addsuccess1(data){

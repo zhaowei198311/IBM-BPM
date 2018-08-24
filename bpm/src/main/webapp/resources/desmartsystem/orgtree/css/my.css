@@ -1,0 +1,48 @@
+::-moz-placeholder { color: #aaa; }
+::-webkit-input-placeholder { color:#aaa; }
+:-ms-input-placeholder { color:#aaa; }
+body{font-size:12px;}
+.table {margin-bottom: 0px;}
+.gohome{display:none;}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th{color:#4178be;font-size:12px;text-align:center;}
+.list{overflow-y:auto;}
+.list_ul{cursor:pointer;list-style:none;margin:0;padding:0;}
+.list_ul li{border-bottom:1px solid #eee;padding-left:13px;height:30px;line-height:30px;}
+.list_ul .search-li{border-bottom:0;text-align:center;height:30px;line-height:30px;padding-left:0;}
+.list_ul .list_active{background:#f2faff;border-left:3px solid #4178be;padding-left:10px;}
+.table > tbody > tr > td{padding:0px;vertical-align:top;height:30px;line-height:30px;border-bottom:1px solid #eee;}
+.table > tbody > tr > th{line-height:10px;}
+.table > tbody > tr >.list_ul{padding-left:11px;}
+.table > tbody > tr >.list_active{background:#f2faff;border-left:3px solid #4178be;padding-left:10px;}
+.wrapper-content{padding:0;}
+#jstree1{width:100%;overflow-x:auto;}
+.jstree-container-ul{font-sieze:12px;}
+.col-xs-4{padding-right:0;}
+.col-xs-8{padding-left:0;}
+.action-list {height: 100%;display: flex;flex-direction: column;}
+.action-list .action-group {display: flex;padding-top: 5px;flex-direction: column;}
+.action-list .action-group button:hover{cursor:pointer;}
+/* .action-list .action-group button:hover::before{content: '';position: absolute;top: 2px;right: 2px;bottom: 2px;left: 2px;border: 1px solid #4178be;}
+.action-list .action-group button:focus{outline:none;} */
+.add_user_div {height: 100%;display: flex;flex-direction: column;}
+.add_user_div .add_user {display: flex;justify-content: flex-end;}
+.add_user_div .add_user button {color: #fff;position: relative;padding: 0px 12px;height: 24px;background-color: #337ab7;border: 1px solid transparent;line-height: 1.2em;font-size: 12px;width:100px;margin:2px 10px 0px 20px;}
+.add_user_div .add_user button:hover{cursor:pointer;}
+.add_user_div .add_user button:hover::before{content: '';position: absolute;top: 2px;right: 2px;bottom: 2px;left: 2px;border: 1px solid #fff;}
+.search_user .search_txt{height:30px;margin:2px 0px;padding:0 5px;border:1px solid #eee;width:100%;outline:none;}
+.search_user .search-nocircle{position:absolute;right:8px;width:16px;top:9px;cursor:pointer;fill:#777677;}
+.search_user .search-nocircle:hover{fill:#4178be}
+.search_user .close-nocircle{position:absolute;right:28px;width:16px;cursor:pointer;top:9px;display:none;fill:#5a5a5a;}
+.search_user .close-nocircle:hover{fill:#4178be}
+#choose_person_div{
+	width: 95%;
+    margin: 13px;
+}
+#jstree1{
+    border: 1px solid #eee;
+    margin-top: 2px;
+}
+.layui-btn+.layui-btn{
+	margin-left:0px;
+}
+    

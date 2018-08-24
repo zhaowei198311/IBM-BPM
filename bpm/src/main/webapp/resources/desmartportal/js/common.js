@@ -52,9 +52,6 @@ var common = {
     	        });
     	    }
     	}); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     chooseRole: function(elementId, isSingle) {
     	var index = layer.open({
@@ -73,9 +70,6 @@ var common = {
                     layer.close(lockIndex);
                 });
             }
-        });
-    	layer.style(index, {
-        	zoom:1.1
         });
     },
     chooseTeam: function(elementId, isSingle) {
@@ -96,9 +90,6 @@ var common = {
                 });
             }
         }); 
-        layer.style(index, {
-        	zoom:1.1
-        });
     },
     //选择数据字典分类的路径
     chooseDictionaryPath:function(id) {
@@ -122,9 +113,6 @@ var common = {
                 });
             }
         }); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     //选择数据字典内容的路径
     chooseDicDataPath:function(id,dicUid) {
@@ -148,9 +136,6 @@ var common = {
                 });
             }
         }); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
     //选择部门的路径
     chooseDepartPath:function(id) {
@@ -171,9 +156,6 @@ var common = {
     	        });
             }
         }); 
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();

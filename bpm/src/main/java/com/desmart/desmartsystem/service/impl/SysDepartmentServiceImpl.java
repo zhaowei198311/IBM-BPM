@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartsystem.dao.SysDepartmentMapper;
+import com.desmart.desmartsystem.entity.JSTreeNode;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.TreeNode;
 import com.desmart.desmartsystem.service.SysDepartmentService;
@@ -82,6 +83,54 @@ public class SysDepartmentServiceImpl   implements SysDepartmentService {
 		return sysDepartmentDao.selectTree(entity);
 	}
 
+	@Override
+	public List<JSTreeNode> selectDepartmentTreeNodeByParent(String id){
+		List<JSTreeNode> nodeList = new ArrayList<>();
+		SysDepartment sysDepartment = new SysDepartment();
+		if(id.equals("10000000")) {
+			sysDepartment.setDepartUid(id);
+			SysDepartment firstDepart = sysDepartmentDao.findById(sysDepartment);
+			JSTreeNode firstNode = new JSTreeNode();
+			firstNode.setId(firstDepart.getDepartUid());
+			firstNode.setText(firstDepart.getDepartName());
+			//以第一个元素为父元素
+			sysDepartment.setDepartUid("");
+			sysDepartment.setDepartParent(id);
+			List<SysDepartment> departList = sysDepartmentDao.selectAll(sysDepartment);
+			List<JSTreeNode> childNodeList = new ArrayList<>();
+			for(SysDepartment childDepartment:departList) {
+				JSTreeNode childNode = new JSTreeNode();
+				childNode.setId(childDepartment.getDepartUid());
+				childNode.setText(childDepartment.getDepartName());
+				boolean flag = true;
+				sysDepartment.setDepartParent(childDepartment.getDepartUid());
+				if(sysDepartmentDao.selectAll(sysDepartment).isEmpty()) {
+					flag = false;
+				}
+				childNode.setChildren(flag);
+				childNodeList.add(childNode);
+			}
+			firstNode.setChildren(childNodeList);
+			nodeList.add(firstNode);
+		}else {
+			sysDepartment.setDepartParent(id);
+			List<SysDepartment> departList = sysDepartmentDao.selectAll(sysDepartment);
+			for(SysDepartment department:departList) {
+				JSTreeNode node = new JSTreeNode();
+				node.setId(department.getDepartUid());
+				node.setText(department.getDepartName());
+				boolean flag = true;
+				sysDepartment.setDepartParent(department.getDepartUid());
+				if(sysDepartmentDao.selectAll(sysDepartment).isEmpty()) {
+					flag = false;
+				}
+				node.setChildren(flag);
+				nodeList.add(node);
+			}
+		}
+		return nodeList;
+	}
+	
 	@Override
 	public ServerResponse queryDepartByNoAndName(SysDepartment sysDepartment) {
 		SysDepartment depart = sysDepartmentDao.queryDepartByNoAndName(sysDepartment);

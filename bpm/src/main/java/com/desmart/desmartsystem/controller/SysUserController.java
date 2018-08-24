@@ -81,7 +81,7 @@ public class SysUserController {
 	 */
 	@RequestMapping(value="/assign_personnel")
 	public ModelAndView assign_personnel(AssignPersonnel assignPersonnel){
-		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/assign_personnel");
+		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/assign_personnel2");
 		model.addObject("assignPersonnel", JSONObject.toJSON(assignPersonnel));
 		return model;
 	}
@@ -94,7 +94,7 @@ public class SysUserController {
 	 */
 	@RequestMapping(value="/select_personnel")
 	public ModelAndView select_personnel(String id, String isSingle){
-		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/select_personnel");
+		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/select_personnel2");
 		model.addObject("id",id);
 		model.addObject("isSingle",isSingle);
 		return model;
@@ -139,10 +139,6 @@ public class SysUserController {
 	
 	/**
 	 * 移动端模糊查询全部用户并分页
-	 * @param sysUser
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
 	 */
 	@RequestMapping(value="/allSysUserMove")
 	@ResponseBody
@@ -155,6 +151,19 @@ public class SysUserController {
 		}
 	}
 	
+	/**
+	 * PC端模糊查询用户
+	 */
+	@RequestMapping(value="/querySysUserByConditionPC")
+	@ResponseBody
+	public ServerResponse querySysUserByConditionPC(String condition){
+		try {
+			return sysUserService.querySysUserByConditionPC(condition);
+		}catch(Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByError();
+		}
+	}
 	
 	/**
 	 * 根据条件查询用户列表
