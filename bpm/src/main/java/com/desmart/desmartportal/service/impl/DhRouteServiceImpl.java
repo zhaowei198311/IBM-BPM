@@ -3,7 +3,6 @@ package com.desmart.desmartportal.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -256,11 +255,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 				return sysUserService.searchByRoleUidListAndCompany(objIdList,companyNum);
 			// 角色组相关
 			case TEAM:
-				return sysUserService.searchByTeam(objIdList);
+				return sysUserService.searchByTeamUidList(objIdList);
 			case TEAM_AND_DEPARTMENT:
-				return sysUserService.searchbyTeamAndDepartment(objIdList,departNo);
+				return sysUserService.searchbyTeamUidListAndDepartment(objIdList,departNo);
 			case TEAM_AND_COMPANY:
-				return sysUserService.searchByTeamAndCompany(objIdList,companyNum);
+				return sysUserService.searchByTeamUidListAndCompany(objIdList,companyNum);
 			// 指定处理人
 			case USERS:
 				return sysUserService.searchByUserUids(objIdList);
@@ -545,11 +544,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		case ROLE_AND_COMPANY:
 			return ServerResponse.createBySuccess(sysUserService.searchByRoleUidListAndCompany(objIdList,companyNum));
 		case TEAM:
-			return ServerResponse.createBySuccess(sysUserService.searchByTeam(objIdList));
+			return ServerResponse.createBySuccess(sysUserService.searchByTeamUidList(objIdList));
 		case TEAM_AND_DEPARTMENT:
-			return ServerResponse.createBySuccess(sysUserService.searchbyTeamAndDepartment(objIdList,departNo));
+			return ServerResponse.createBySuccess(sysUserService.searchbyTeamUidListAndDepartment(objIdList,departNo));
 		case TEAM_AND_COMPANY:
-			return ServerResponse.createBySuccess(sysUserService.searchByTeamAndCompany(objIdList,companyNum));
+			return ServerResponse.createBySuccess(sysUserService.searchByTeamUidListAndCompany(objIdList,companyNum));
 		case USERS:
 			return ServerResponse.createBySuccess(sysUserService.searchByUserUids(objIdList));
 		case BY_FIELD:// 根据表单字段选
@@ -1234,11 +1233,11 @@ public class DhRouteServiceImpl implements DhRouteService {
                 return sysUserService.searchByRoleUidListAndCompany(objIdList, companyNum);
             // 角色组相关
             case TEAM:
-                return sysUserService.searchByTeam(objIdList);
+                return sysUserService.searchByTeamUidList(objIdList);
             case TEAM_AND_DEPARTMENT:
-                return sysUserService.searchbyTeamAndDepartment(objIdList, departNo);
+                return sysUserService.searchbyTeamUidListAndDepartment(objIdList, departNo);
             case TEAM_AND_COMPANY:
-                return sysUserService.searchByTeamAndCompany(objIdList, companyNum);
+                return sysUserService.searchByTeamUidListAndCompany(objIdList, companyNum);
             // 指定处理人
             case USERS:
                 return sysUserService.searchByUserUids(objIdList);

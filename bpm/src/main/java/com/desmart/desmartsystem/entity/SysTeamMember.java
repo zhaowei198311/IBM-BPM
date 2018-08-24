@@ -3,15 +3,18 @@ package com.desmart.desmartsystem.entity;
 import java.util.List;
 
 public class SysTeamMember {
+    public static final String TYPE_ROLE = "role";
+    public static final String TYPE_USER = "user";
+
     private String memberUid;
  
     private String teamUid;
 
-    private String userUid;
+    private String userUid;   // ！！保存的是角色Uid或者人员Uid
     
     private String userName;
 
-    private String memberType;
+    private String memberType; // role  / user 常量维护
 
     private Integer orderIndex;
     

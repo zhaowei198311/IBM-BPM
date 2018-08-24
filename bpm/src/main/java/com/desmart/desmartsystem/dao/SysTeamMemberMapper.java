@@ -1,5 +1,6 @@
 package com.desmart.desmartsystem.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.repository.query.Param;
@@ -21,9 +22,11 @@ public interface SysTeamMemberMapper {
 
     int updateByPrimaryKey(SysTeamMember record);
     
-    public List<SysTeamMember> selectAll(SysTeamMember entity);
+    List<SysTeamMember> selectAll(SysTeamMember entity);
     
     int delete(SysTeamMember entity);
     
     List<SysTeamMember> selectTeamUser(SysTeamMember entity);
+
+    List<SysTeamMember> listByTeamUids(Collection<String> teamUids);
 }
